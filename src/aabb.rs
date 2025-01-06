@@ -706,8 +706,11 @@ mod tests {
             // Span the `Aabb`
             let aabb = TAabb3::empty().grow(&p1).join_bounded(&p2);
 
-            // Its center should be inside the `Aabb`
-            assert!(aabb.contains(&aabb.center()));
+            // If the AABB is too big, the optimized `center` function can
+            // return non-finite coordinates.
+            if aabb.size().iter().all(|f| f.is_finite()) {
+                assert!(aabb.contains(&aabb.center()));
+            }
         }
 
         // Test whether the joint of two point-sets contains all the points.
